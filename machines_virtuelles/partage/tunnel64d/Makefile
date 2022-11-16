@@ -9,7 +9,7 @@ OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 CC := gcc
 CPPFLAGS := -Iinc -MMD -MP
-CFLAGS   := -Wall -pedantic -g -O2
+CFLAGS   := -Wall -pedantic -g
 
 .PHONY: all clean
 
