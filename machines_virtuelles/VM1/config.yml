@@ -38,13 +38,5 @@
       autoconnect: true
       ip6: fc00:1234:3::1/64
 
-  - name: Configuration de la route vers les autres ipv6 via VM1-6
-    community.general.nmcli:
-      type: ethernet
-      conn_name: eth2 via ansible
-      ifname: eth2
-      routes6: ::/0 fc00:1234:3::16
-      state: present
-
   - name: Activation explicite de la configuration eth2
     shell: nmcli con up "eth2 via ansible"
