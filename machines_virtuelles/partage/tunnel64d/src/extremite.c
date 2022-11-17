@@ -60,7 +60,7 @@ void ext_out(int dest, char *port){
 
   // La socket est prete à écouter sur le port
   if(listen(sd, SOMAXCONN) < 0){
-    fprintf(stderr, "Erreur durant l'initialisation de l'éoute, ARRET...\n");
+    fprintf(stderr, "Erreur durant l'initialisation de l'écoute, ARRET...\n");
     exit(-1);
   }
 
@@ -109,10 +109,11 @@ void ext_in(int src, char *hote, char *port){
   printf("\nNuméro de socket : %i\n\nTentative de connexion %s\n\n", sd, ip);
 
   // Tentative de connexion à l'hôte
-  if(connect(sd, resol->ai_addr, sizeof(struct sockaddr_in)) < 0){
-    fprintf(stderr, "Erreur de connexion à l'hôte demandé, ARRET...\n");
-    exit(-1);
+  while(connect(sd, resol->ai_addr, sizeof(struct sockaddr_in)) < 0){
+    fprintf(stderr, ".");
+    sleep(1);
   }
+  putchar('\n');
 
   // Libération de la mémoire de la structure de résolution
   freeaddrinfo(resol);
