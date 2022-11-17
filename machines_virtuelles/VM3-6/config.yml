@@ -20,3 +20,9 @@
 
   - name: Activation explicite de la configuration eth1
     shell: nmcli con up "eth1 via ansible"
+
+  - name: Activation du routage IPv6
+    sysctl:
+      name: net.ipv6.conf.all.forwarding
+      value: '1'
+      sysctl_set: yes
