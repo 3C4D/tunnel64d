@@ -37,6 +37,7 @@ int tun_alloc(char *dev){
 
 // Envoi perpetuel de ce qui arrive dans src dans dst
 void transfert(int src, int dest){
+  long nb_lu;
   char c[1500];
 
   if(src < 0 || dest < 0){  // Vérification des descripteurs
@@ -46,8 +47,8 @@ void transfert(int src, int dest){
 
   // On lit des caractères sur src continuellement
   while(1){
-    read(src, c, 1500);
-    printf("char %c\n", *c);
-    write(dest, c, 1500);
+    nb_lu = read(src, c, 1500);
+    printf("%ld\n", nb_lu);
+    write(dest, c, nb_lu);
   }
 }
