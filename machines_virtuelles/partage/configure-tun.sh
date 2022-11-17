@@ -1,7 +1,7 @@
 # Fichier de configuration de l'interface TUN
 
-# On active l'interface au cas ou elle soit dans l'état DOWN
+# Activation de tun0 dans le cas ou elle serait inactive
 ip link set tun0 up
 
-# On ajoute l'IPv6 à l'interface
+# Ajout d'une IPv6 à tun0
 ip -6 a add fc00:1234:ffff::1/64 dev tun0
