@@ -18,19 +18,13 @@
       autoconnect: true
       ip6: fc00:1234:3::16/64
 
-  - name: Configuration de la route vers les autres ipv6 via VM2-6
+  - name: Configuration de la route vers LAN-4 via VM1
     community.general.nmcli:
       type: ethernet
       conn_name: eth1 via ansible
       ifname: eth1
-      routes6: ::/0 fc00:1234:3::1
+      routes6: fc00:1234:4::/0 fc00:1234:3::1
       state: present
 
   - name: Activation explicite de la configuration eth1
     shell: nmcli con up "eth1 via ansible"
-
-  - name: Activation du routage IPv6
-    sysctl:
-      name: net.ipv6.conf.all.forwarding
-      value: '1'
-      sysctl_set: yes
