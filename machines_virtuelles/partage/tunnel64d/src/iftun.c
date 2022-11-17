@@ -36,10 +36,10 @@ int tun_alloc(char *dev){
 }
 
 // Envoi perpetuel de ce qui arrive dans src dans dst
-void transfert(int src, int dst){
+void transfert(int src, int dest){
   char c[1500];
 
-  if(src < 0 || dst < 0){ // Vérification des descripteurs
+  if(src < 0 || dest < 0){  // Vérification des descripteurs
     fprintf(stderr, "Mauvais descripteurs de fichiers, transfert, ARRET...\n");
     exit(-1);
   }
@@ -48,6 +48,6 @@ void transfert(int src, int dst){
   while(1){
     read(src, c, 1500);
     printf("char %c\n", *c);
-    write(dst, c, 1500);
+    write(dest, c, 1500);
   }
 }

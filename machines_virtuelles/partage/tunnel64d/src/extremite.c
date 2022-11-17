@@ -11,12 +11,83 @@
 #include <arpa/inet.h>
 #include "iftun.h"
 
-#define MAXLIGNE 80
+// Crée un serveur et écoute sur un port donné, redirige sur une interface
+void ext_out(int dest, char *port){
+  struct addrinfo * resol;    // Structure de résolution
+
+  // Configuration : toute interface, mode connecté
+  struct addrinfo indic = {AI_PASSIVE,            // Toute interface
+                          PF_INET,SOCK_STREAM,0,  // Mode connecté
+                          0,NULL,NULL,NULL};
+
+  struct sockaddr_in client;  // Adresse du client (de la socket du client)
+  char hotec[NI_MAXHOST];     // Nom d'hote du client
+  char portc[NI_MAXSERV];     // Port du client
+  int sd, nd;                 // Descripteurs de fichier de la socket
+  int len, port_on;
+
+  len = sizeof(struct sockaddr_in);
+  port_on = 1;
+
+  // Résolution
+  if(getaddrinfo(NULL, port, &indic, &resol) < 0){
+    fprintf(stderr, "Erreur durant la résolution de l'adresse, ARRET...\n");
+    exit(-1);
+  }
+
+  // Création de la socket TCP/IP
+  if((sd = socket(resol->ai_family,resol->ai_socktype,resol->ai_protocol)) < 0){
+    fprintf(stderr, "Erreur durant l'allocation de la socket, ARRET...\n");
+    exit(-1);
+  }
+  fprintf(stderr,"le n° de la socket est : %i\n", sd);
+
+  // On s'assure que le port soit réutilisable rapidement
+  port_on = 1;
+  if(setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &port_on, sizeof(port_on)) < 0){
+    fprintf(stderr, "Erreur, options de la socket, ARRET...\n");
+    exit(-1);
+  }
+
+  // Association de la socket à l'adresse par résolution
+  if(bind(sd, resol->ai_addr, sizeof(struct sockaddr_in)) < 0){
+    fprintf(stderr, "Erreur durant l'association de la socket, ARRET...\n");
+    exit(-1);
+  }
+
+  // Libération de la mémoire de la structure de résolution
+  freeaddrinfo(resol);
+
+  // La socket est prete à écouter sur le port
+  if(listen(sd, SOMAXCONN) < 0){
+    fprintf(stderr, "Erreur durant l'initialisation de l'éoute, ARRET...\n");
+    exit(-1);
+  }
+
+  while(1){ // Attente continuelle de clients
+    if((nd = accept(sd, (struct sockaddr *)&client, (socklen_t*)&len)) < 0){
+      fprintf(stderr, "Erreur durant l'acceptation de connexion, ARRET...\n");
+      exit(-1);
+    }
+
+    if(
+      getnameinfo(
+        (struct sockaddr*)&client, len, hotec, NI_MAXHOST,
+        portc, NI_MAXSERV, 0
+      ) < 0 ){
+      fprintf(stderr, "Erreur durant la résolution du client, ARRET...\n");
+    }else{
+      fprintf(stderr, "Connexion établie %i ip=%s port=%s\n", nd, hotec, portc);
+    }
+
+    transfert(nd, dest);
+  }
+}
+
 
 // Retransmet par TCP le contenu d'une interface vers l'autre extremité
 void ext_in(int src, char *hote, char *port){
   struct addrinfo *resol;     // Structure pour la résolution de nom
-  char *ipv6_tmp;             // Notation IPv6
   char ip[NI_MAXHOST];        // Addresse IPv4 (noation pointée)
   int sd;                     // Descripteur de fichier de la socket
 
@@ -26,23 +97,8 @@ void ext_in(int src, char *hote, char *port){
     exit(-1);
   }
 
-  // Allocation de l'adresse IPv6
-  ipv6_tmp = malloc(INET6_ADDRSTRLEN);
-  if(ipv6_tmp == NULL){
-    fprintf(stderr, "Erreur d'allocation, ARRET...\n");
-    exit(-1);
-  }
-
-  sprintf(
-    ip,
-    "%s",
-    inet_ntop(
-      AF_INET6,
-      ((struct sockaddr_in6*)resol->ai_addr)->sin6_addr.s6_addr,
-      ipv6_tmp,
-      INET6_ADDRSTRLEN
-    )
-  );
+  // Extraction de l'IP
+  sprintf(ip, "%s", inet_ntoa(((struct sockaddr_in*)resol->ai_addr)->sin_addr));
 
   // Création d'une socket TCP/IP
   if((sd=socket(resol->ai_family, resol->ai_socktype, resol->ai_protocol)) < 0){
@@ -50,10 +106,10 @@ void ext_in(int src, char *hote, char *port){
     exit(-1);
   }
 
-  printf("\nNuméro de socket : %i\n\nTentative de connexion %s %s\n\n", sd, ip, port);
+  printf("\nNuméro de socket : %i\n\nTentative de connexion %s\n\n", sd, ip);
 
   // Tentative de connexion à l'hôte
-  if(connect(sd, resol->ai_addr, sizeof(struct sockaddr_in6)) < 0){
+  if(connect(sd, resol->ai_addr, sizeof(struct sockaddr_in)) < 0){
     fprintf(stderr, "Erreur de connexion à l'hôte demandé, ARRET...\n");
     exit(-1);
   }
