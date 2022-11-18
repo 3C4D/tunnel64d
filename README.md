@@ -16,7 +16,7 @@ commande `make`
 
 ## Utilisation
 
-Pour lancer le tunnel sur la machine VM1, il faut exécuter la commande `./bin/tunnel64d 1` depuis le répertoire `/mnt/partage/tunnel64d/`.
+Pour lancer le tunnel sur la machine VM1, il faut exécuter la commande `./bin/tunnel64d 1 tun0` depuis le répertoire `/mnt/partage/tunnel64d/`.
 
 Depuis le meme répertoire sur la machine VM3, on peut exécuter la commande
-`./bin/tunnel64d 2` pour lancer le tunnel sur cette machine.
+`./bin/tunnel64d 2 tun0` pour lancer le tunnel sur cette machine.

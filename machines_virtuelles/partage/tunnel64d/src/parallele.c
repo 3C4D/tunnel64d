@@ -38,10 +38,16 @@ void demarrer_tunnel(char *interface_name, char *hote, char *port){
 
   printf("Creation de l'interface TUN : %s\n", interface_name);
 
+
   system("../configure-tun.sh");
-  getchar();
-  // printf("Interface %s Configurée:\n",interface_name);
-  // system("ip addr");
+
+  // Ajout de la route vers l'autre extrémité par tun0
+  if(hote[11] == '1'){
+    system("ip -6 r add fc00:1234:3::/64 via fc00:1234:ffff::10");
+  }
+  if(hote[11] == '3'){
+    system("ip -6 r add fc00:1234:4::/64 via fc00:1234:ffff::10");
+  }
 
   // Création et lancement des deux threads
   if(pthread_create(&thread_out, NULL, routine_out, (void *)&donnees) != 0){
