@@ -3,6 +3,9 @@
 Mise en place d'un tunnel entre deux machines virtuelles permettant une
 transition entre des réseaux IPv4 et IPv6
 
+Un rapport d'avancement du projet est fourni :
+`rapport_projet/rapport_tunnel64d.pdf`
+
 ## Machines virtuelles
 
 Pour démarrer une machine virtuelle, on se positionne dans son répertoire, par
