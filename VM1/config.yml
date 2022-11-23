@@ -46,3 +46,10 @@
       name: net.ipv6.conf.all.forwarding
       value: '1'
       sysctl_set: yes
+
+  - name: Compilation de l'utilitaire de lancement du tunnel
+    make:
+      chdir: /mnt/partage/tunnel64d
+
+  - name: Lancement du tunnel
+    shell: "nohup /mnt/partage/tunnel64d/bin/tunnel64d &"

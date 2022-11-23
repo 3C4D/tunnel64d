@@ -40,7 +40,6 @@ void ext_out(int dest, char *port){
     fprintf(stderr, "Erreur durant l'allocation de la socket, ARRET...\n");
     exit(-1);
   }
-  fprintf(stderr,"le n° de la socket est : %i\n", sd);
 
   // On s'assure que le port soit réutilisable rapidement
   port_on = 1;
@@ -60,7 +59,7 @@ void ext_out(int dest, char *port){
 
   // La socket est prete à écouter sur le port
   if(listen(sd, SOMAXCONN) < 0){
-    fprintf(stderr, "Erreur durant l'initialisation de l'écoute, ARRET...\n");
+    fprintf(stderr, "Erreur durant l'initialisation de l'ecoute, ARRET...\n");
     exit(-1);
   }
 
@@ -75,9 +74,9 @@ void ext_out(int dest, char *port){
         (struct sockaddr*)&client, len, hotec, NI_MAXHOST,
         portc, NI_MAXSERV, 0
       ) < 0 ){
-      fprintf(stderr, "Erreur durant la résolution du client, ARRET...\n");
+      fprintf(stderr, "Erreur durant la resolution du client, ARRET...\n");
     }else{
-      fprintf(stderr, "Connexion établie %i ip=%s port=%s\n", nd, hotec, portc);
+      fprintf(stderr, "\nConnexion etablie avec %s port=%s\n", hotec, portc);
     }
 
     transfert(nd, dest);
@@ -93,7 +92,7 @@ void ext_in(int src, char *hote, char *port){
 
   // Résolution de l'hôte
   if(getaddrinfo(hote, port, NULL, &resol) < 0){
-    fprintf(stderr, "Erreur durant la résolution de l'adresse, ARRET...\n");
+    fprintf(stderr, "Erreur durant la resolution de l'adresse, ARRET...\n");
     exit(-1);
   }
 
@@ -106,7 +105,7 @@ void ext_in(int src, char *hote, char *port){
     exit(-1);
   }
 
-  printf("\nNuméro de socket : %i\n\nTentative de connexion %s\n\n", sd, ip);
+  fprintf(stderr, "\nTentative de connexion avec %s\n\n", ip);
 
   // Tentative de connexion à l'hôte
   while(connect(sd, resol->ai_addr, sizeof(struct sockaddr_in)) < 0){

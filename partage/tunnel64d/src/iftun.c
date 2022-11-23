@@ -48,7 +48,6 @@ void transfert(int src, int dest){
   // On lit des caractères sur src continuellement
   while(1){
     nb_lu = read(src, c, 1500);
-    printf("%ld\n", nb_lu);
     write(dest, c, nb_lu);
   }
 }
