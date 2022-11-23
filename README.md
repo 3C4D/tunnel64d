@@ -11,6 +11,9 @@ Un rapport d'avancement du projet est fourni :
 Pour démarrer une machine virtuelle, on se positionne dans son répertoire, par
 exemple `VM1`, puis on exécute la commande `vagrant up`.
 
+Pour démarrer toutes les machines, on peut aussi exécuter la commande
+`./demarrer_machines.sh`
+
 ## Compilation du programme tunnel64d
 
 Afin de compiler le programme tunnel64d depuis l'une des machines virtuelles, il
