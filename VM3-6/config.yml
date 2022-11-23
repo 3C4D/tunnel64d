@@ -4,8 +4,25 @@
   remote_user: root
   tasks:
 
+# Configuration du service echo
+  - name: Installation inetutils-inetd
+    package:
+      name: inetutils-inetd
+      state: present
+
+  - name: Ajout du service echo dans la base de données de ‘inetd‘
+    shell: /sbin/update-inetd --add "echo stream tcp6 nowait nobody internal"
+
+  - name: Demarrage du service inetutils-inetd
+    service:
+      name: inetutils-inetd
+      state: started
+
+  - name: Redémarrage du service echo au cas ou il soit "exited"
+    shell: /sbin/update-inetd --add "echo stream tcp6 nowait nobody internal"
+
 # Configurations Réseaux
-  - name: Suppression de la passerelle par défaut
+  - name: Suppression de la passerelle par defaut
     shell: ip route del default
     ignore_errors: true
 

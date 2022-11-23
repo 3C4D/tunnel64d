@@ -5,7 +5,7 @@
   tasks:
 
 # Configurations Réseaux
-  - name: Suppression de la passerelle par défaut
+  - name: Suppression de la passerelle par defaut
     shell: ip route del default
     ignore_errors: true
 
