@@ -4,25 +4,26 @@
 #include <stdio.h>
 #include "saisie.h"
 
-info_config saisie_config(){
-  info_config infos;
+// Saisie du fichier de configuration de la machine pour le tunnel
+info_config_t saisie_config(){
+  info_config_t infos;
   FILE *conf;
   char c;
 
   char *format[] = {  // Différents formats à chercher
     "dev=%s\n",
-    "ipin=%s\n",
     "portin=%s\n",
-    "ipout=%s\n",
     "portout=%s\n",
+    "lan=%s\n",
+    "ipout=%s\n",
   };
 
   char *refs[] = {    // Références où stocker les informations trouvées
     infos.dev,
-    infos.ipin,
     infos.portin,
-    infos.ipout,
-    infos.portout
+    infos.portout,
+    infos.lan,
+    infos.ipout
   };
 
   // Vérification de l'existence du fichier
@@ -36,11 +37,6 @@ info_config saisie_config(){
       c = '$';
       while(c != EOF && c != '\n'){ // On passe à la ligne suivante
         c = fgetc(conf);
-      }
-
-      if(c == EOF){ // Fin de fichier atteinte sans tout trouvé
-        fprintf(stderr, "Erreur de formatage : %s, ARRET...\n", FICHIER_CONF);
-        exit(-1);
       }
     }
   }

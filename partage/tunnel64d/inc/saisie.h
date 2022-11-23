@@ -1,16 +1,13 @@
-// Prorotypes des fonctions de saisie (et structures)
+// Prorotypes des fonctions de saisie
 
 #ifndef SAISIE_H_
 #define SAISIE_H_
 
-#define FICHIER_CONF "/vagrant/params_VM1"
+#include "parallele.h"
 
-typedef struct{
-  char dev[42];
-  char ipin[42];
-  char ipout[42];
-  char portin[8];
-  char portout[8];
-} info_config;
+#define FICHIER_CONF "/vagrant/configuration_tunnel"
+
+// Saisie du fichier de configuration de la machine pour le tunnel
+info_config_t saisie_config();
 
 #endif

@@ -3,7 +3,7 @@
 #ifndef EXTREMITE_H_
 #define EXTREMITE_H_
 
-// Crée un serveur et écoute sur un port donné, redirige sur la sortie standard
+// Crée un serveur et écoute sur un port donné, redirige sur dest
 void ext_out(int dest, char *port);
 
 // Retransmet par TCP le contenu d'une interface vers l'autre extremité

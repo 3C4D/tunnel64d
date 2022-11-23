@@ -1,0 +1,16 @@
+# Configuration du tunnel de VM1
+
+# Interface du tunnel
+dev=tun0
+
+# Port où écouter les paquets entrant, afin de les rediriger sur l'interface
+portin=124
+
+# Port où écrire les données entrant sur tun0
+portout=123
+
+# Sous-réseau à atteindre avec le tunnel
+lan=fc00:1234:4::/64
+
+# IPv4 où envoyer les paquets émis sur tun0
+ipout=172.16.2.163

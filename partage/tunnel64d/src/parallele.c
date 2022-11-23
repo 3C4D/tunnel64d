@@ -11,7 +11,7 @@
 void *routine_out(void *arg){
   donnees_tunnel_t *donnees = (donnees_tunnel_t *)arg;
 
-  ext_out(donnees->df, donnees->port);
+  ext_out(donnees->df, donnees->portin);
 
   return NULL;
 }
@@ -20,34 +20,35 @@ void *routine_out(void *arg){
 void *routine_in(void *arg){
   donnees_tunnel_t *donnees = (donnees_tunnel_t *)arg;
 
-  ext_in(donnees->df, donnees->hote, donnees->port);
+  ext_in(donnees->df, donnees->hote, donnees->portout);
 
   return NULL;
 }
 
-// Permet de démarrer parrallèlement le tunnel dans les deux directions
-void demarrer_tunnel(char *interface_name, char *hote, char *port){
+// Permet de démarrer parallèlement le tunnel dans les deux directions
+void demarrer_tunnel(info_config_t infos){
   pthread_t thread_out, thread_in;
   donnees_tunnel_t donnees;
+  char configure[500];
 
-
-  donnees.df = tun_alloc(interface_name);
-  donnees.port = port;
-  donnees.hote = hote;
+  donnees.df = tun_alloc(infos.dev);
+  donnees.portout = infos.portout;
+  donnees.portin = infos.portin;
+  donnees.hote = infos.ipout;
   printf("\n");
 
-  printf("Creation de l'interface TUN : %s\n", interface_name);
+  printf("Creation de l'interface TUN : %s\n", infos.dev);
 
+  // Rédaction de la commande configurant tun0 par le script configure-tun.sh
+  snprintf(
+    configure,
+    sizeof(configure),
+    "../configure-tun.sh %s %s",
+    infos.dev,
+    infos.lan
+  );
 
-  system("../configure-tun.sh");
-
-  // Ajout de la route vers l'autre extrémité par tun0
-  if(hote[11] == '1'){
-    system("ip -6 r add fc00:1234:3::/64 via fc00:1234:ffff::10");
-  }
-  if(hote[11] == '3'){
-    system("ip -6 r add fc00:1234:4::/64 via fc00:1234:ffff::10");
-  }
+  system(configure);
 
   // Création et lancement des deux threads
   if(pthread_create(&thread_out, NULL, routine_out, (void *)&donnees) != 0){
