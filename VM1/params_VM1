@@ -1,0 +1,8 @@
+# interface tun
+dev=tun0
+# adresse locale
+ipin=172.16.2.131
+portin=123
+# adresse distante
+ipout=172.16.2.163
+portout=124
