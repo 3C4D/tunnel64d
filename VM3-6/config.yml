@@ -18,7 +18,7 @@
       name: inetutils-inetd
       state: started
 
-  - name: Redémarrage du service echo au cas ou il soit "exited"
+  - name: Redemarrage du service echo au cas ou il soit "exited"
     shell: /sbin/update-inetd --add "echo stream tcp6 nowait nobody internal"
 
 # Configurations Réseaux
