@@ -19,7 +19,7 @@
       state: started
 
   - name: Redemarrage du service echo au cas ou il soit "exited"
-    shell: /sbin/update-inetd --add "echo stream tcp6 nowait nobody internal"
+    shell: service inetutils-inetd restart
 
 # Configurations Réseaux
   - name: Suppression de la passerelle par defaut
