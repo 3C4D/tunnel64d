@@ -7,7 +7,6 @@ typedef struct{
   char dev[42];         // Le descripteur de fichier (l'interface TUN)
   char portout[8];      // Port où écrire
   char portin[8];       // Port où écouter
-  char lan[42];         // LAN à atteindre par le tunnel
   char ipout[42];       // IP à atteindre via la socket
 } info_config_t;
 

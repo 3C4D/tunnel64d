@@ -43,9 +43,8 @@ void demarrer_tunnel(info_config_t infos){
   snprintf(
     configure,
     sizeof(configure),
-    "/mnt/partage/tunnel64d/configure-tun.sh %s %s",
-    infos.dev,
-    infos.lan
+    "/mnt/partage/tunnel64d/configure-tun.sh %s",
+    infos.dev
   );
 
   system(configure);

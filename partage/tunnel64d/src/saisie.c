@@ -14,7 +14,6 @@ info_config_t saisie_config(){
     "dev=%s\n",
     "portin=%s\n",
     "portout=%s\n",
-    "lan=%s\n",
     "ipout=%s\n",
   };
 
@@ -22,7 +21,6 @@ info_config_t saisie_config(){
     infos.dev,
     infos.portin,
     infos.portout,
-    infos.lan,
     infos.ipout
   };
 
@@ -32,7 +30,7 @@ info_config_t saisie_config(){
     exit(-1);
   }
 
-  for(int i = 0; i < 5; i++){
+  for(int i = 0; i < 4; i++){
     while(!fscanf(conf, format[i], refs[i])){
       c = '$';
       while(c != EOF && c != '\n'){ // On passe à la ligne suivante
