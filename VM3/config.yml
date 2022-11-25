@@ -52,4 +52,4 @@
       chdir: /mnt/partage/tunnel64d
 
   - name: Lancement du tunnel
-    shell: nohup /mnt/partage/tunnel64d/bin/tunnel64d >/dev/null 2>&1
+    shell: nohup /mnt/partage/tunnel64d/bin/tunnel64d >/dev/null 2>&1 &
