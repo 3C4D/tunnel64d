@@ -1,0 +1,47 @@
+# Fichier de configuration ansible pour la machine VM3-6
+
+- hosts: localhost
+  remote_user: root
+  tasks:
+
+# Configuration du service echo
+  - name: Installation inetutils-inetd
+    package:
+      name: inetutils-inetd
+      state: present
+
+  - name: Ajout du service echo dans la base de données de ‘inetd‘
+    shell: /sbin/update-inetd --add "echo stream tcp6 nowait nobody internal"
+
+  - name: Demarrage du service inetutils-inetd
+    service:
+      name: inetutils-inetd
+      state: started
+
+  - name: Redemarrage du service echo au cas ou il soit "exited"
+    shell: service inetutils-inetd restart
+
+# Configurations Réseaux
+  - name: Suppression de la passerelle par defaut
+    shell: ip route del default
+    ignore_errors: true
+
+  - name: Configuration de VM3/eth1
+    nmcli:
+      type: ethernet
+      conn_name: eth1 via ansible
+      ifname: eth1
+      state: present
+      autoconnect: true
+      ip6: fc00:1234:4::36/64
+
+  - name: Configuration de la route vers LAN-3 via VM3
+    community.general.nmcli:
+      type: ethernet
+      conn_name: eth1 via ansible
+      ifname: eth1
+      routes6: fc00:1234:3::/0 fc00:1234:4::3
+      state: present
+
+  - name: Activation explicite de la configuration eth1
+    shell: nmcli con up "eth1 via ansible"
