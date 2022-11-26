@@ -3,4 +3,6 @@ bin
 obj
 .o
 .d
-rapport
+rapport_projet
+!rapport_projet/*.tex
+!rapport_projet/*.pdf
