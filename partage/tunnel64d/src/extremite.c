@@ -79,7 +79,7 @@ void ext_out(int dest, char *port){
       fprintf(stderr, "\nConnexion etablie avec %s port=%s\n", hotec, portc);
     }
 
-    transfert(nd, dest);
+    transfert(nd, dest, 1);
   }
 }
 
@@ -119,7 +119,7 @@ void ext_in(int src, char *hote, char *port){
 
   // On ne souhaite pas de flags dans l'appel à send, c'est équivalent à write
   // On peut donc directement transferer d'un descripteur à un autre
-  transfert(src, sd);
+  transfert(src, sd, 0);
 
   /* Destruction de la socket */
   close(sd);

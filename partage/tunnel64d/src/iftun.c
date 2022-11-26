@@ -36,9 +36,10 @@ int tun_alloc(char *dev){
 }
 
 // Envoi perpetuel de ce qui arrive dans src dans dst
-void transfert(int src, int dest){
+void transfert(int src, int dest, int out){
   long nb_lu;
-  char c[1500];
+  int i, entete;
+  char c[1500], buf_entete[4];
 
   if(src < 0 || dest < 0){  // Vérification des descripteurs
     fprintf(stderr, "Mauvais descripteurs de fichiers, transfert, ARRET...\n");
@@ -47,7 +48,18 @@ void transfert(int src, int dest){
 
   // On lit des caractères sur src continuellement
   while(1){
-    nb_lu = read(src, c, 1500);
-    write(dest, c, nb_lu);
+    if(!out){ // Entrée du tunnel
+      nb_lu = read(src, c, 1500);   // On prend comme marge le MTU en entrée
+      buf_entete[0] = nb_lu / 256;  // On met la taille du paquet sur 2 octets
+      buf_entete[1] = nb_lu % 256;
+      write(dest, buf_entete, 2);   // On écrit la taille du paquet
+      write(dest, c, nb_lu);        // On écrit le paquet
+    }
+    else{     // Sortie du tunnel
+      read(src, c, 2);              // On lit la taille du paquet entré
+      entete = (c[0] * 256 + c[1]); // On retranscrit la taille du paquet
+      nb_lu = read(src, c, entete); // On lit le paquet (juste ce qu'il faut)
+      write(dest, c, nb_lu);        // On écrit le paquet
+    }
   }
 }

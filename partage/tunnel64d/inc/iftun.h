@@ -7,6 +7,6 @@
 int tun_alloc(char *dev);
 
 // Envoi perpetuel de ce qui arrive dans src dans dst
-void transfert(int src, int dst);
+void transfert(int src, int dst, int out);
 
 #endif
