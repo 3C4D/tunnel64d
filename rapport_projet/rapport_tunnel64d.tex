@@ -51,7 +51,7 @@
       et à \verb+VM3-6+ pour communiquer avec elle. Il ne reste donc à ces deux
       machines qu'une interface dotée d'une IPv6. \\
 
-      Il faut désormais construire un tunnel afin que VM1-6 et VM3-6 puisse à
+      Il faut désormais construire un tunnel afin que VM1-6 et VM3-6 puissent à
       nouveau communiquer.
 
   \section{L'interface virtuelle TUN}
@@ -63,9 +63,9 @@
       rajoutée à la bibliothèque \verb+iftun+.
 
       On remarque que l'interface (ici tun0) créé en utilisant \verb+tunalloc+
-      n'est pas persistente quand le programme englobant l'appel de
-      \verb+tunalloc+ termine, il faut donc pouvoir la configurer avant afin de
-      l'utiliser.
+      n'est pas persistente lorsque le programme l'interface termine, il faut
+      donc pouvoir la créer, la configurer et l'utiliser avant que le programme
+      qui l'ai créé ne termine.
 
       \verb+tunalloc+ aura aussi pour but de renvoyer le descripteur de fichier
       correspondant à l'interface. \\
@@ -85,10 +85,10 @@
         ip -6 a add fc00:1234:ffff::32 dev tun0
       \end{verbatim}
 
-      On affecte le masque /32 à tun0 afin que les adresses IPv6 des différents
-      LAN soient reconnues comme faisant partie du sous-réseau de \verb+tun0+,
-      les paquets passeront donc par le tunnel sans routage supplémentaire sur
-      la machine créant \verb+tun0+.
+      On affecte le masque /32 à \verb+tun0+ afin que les adresses IPv6 des
+      différents LAN soient reconnues comme faisant partie du sous-réseau de
+      \verb+tun0+, les paquets passeront donc par le tunnel sans routage
+      supplémentaire sur la machine créant \verb+tun0+.
 
       Lorsqu'on réalise un ping sur l'adresse IP de l'interface \verb+tun0+ à
       savoir \verb+fc00:1234:ffff::1+, on peut observer qu'aucun paquet n'est
@@ -97,10 +97,9 @@
 
       En revanche, lorsqu'on réalise un ping sur une adresse telle que
       \verb+fc00:1234:ffff::10+, qui ne correspond à aucune machine mais faisant
-      partie du sous-réseau de \verb+tun0+, wireshark intercepte les paquets en
-      destination de l'adresse sur \verb+tun0+, le ping n'obtient pas de réponse,
-      l'adresse ne menant à aucune machine. On peut observer une capture d'un
-      ping sur cette adresse dans le fichier
+      partie du sous-réseau de \verb+tun0+, \verb+wireshark+ intercepte les
+      paquets en destination de l'adresse sur \verb+tun0+. On peut observer une
+      capture d'un ping sur cette adresse dans le fichier
       \verb+captures/ping_tun0:10.pcapng+.\\
 
       Une explication pourrait etre la suivante, l'interface \verb+tun0+ ne
@@ -114,13 +113,13 @@
 
     \subsection{Récupération des paquets}
 
-      L'interface \verb+tun0+ est créé, on dispose maintenant d'un descripteur
+      L'interface \verb+tun0+ est créée, on dispose maintenant d'un descripteur
       de fichier lui correspondant permettant de lire des informations. On crée
       une fonction \verb+transfert+ dans le bibliothèque \verb+iftun+, ayant
       pour but d'écrire d'un fichier \verb+src+ dans un fichier \verb+dest+.
 
       Nous allons nous servir de la fonction transfert afin de rediriger des
-      flux vers tun0 et inversement. \\
+      flux vers \verb+tun0+ et inversement. \\
 
       On peut imprimer le flux de \verb+tun0+ sur la sortie standard en
       utilisant la fonction de transfert (la source est le descripteur de
@@ -128,7 +127,7 @@
       standard, soit 1). On filtrera la sortie grace à \verb+hexdump+ afin de ne
       pas essayer d'imprimer des caractères non imprimables. On peut voir dans
       le fichier \verb+captures/sortie_test_iftun.log+ un exemple de redirection
-      du flux de tun0 sur la sortie standard (filtré par \verb+hexdump+).
+      du flux de \verb+tun0+ sur la sortie standard (filtré par \verb+hexdump+).
 
       On peut observer que rien n'est imprimé lorsque l'on réalise un ping
       \verb+fc00:1234:ffff::1+ et que le traffic IPv6 transféré par \verb+tun0+
@@ -162,7 +161,7 @@
       via une socket. Ce serveur aura pour but d'écouter sur le port 123 et de
       rediriger le traffic sur la sortie standard.
 
-      \verb+ext_in+ devra se connecter via une connexion TCP au serveur qu'à
+      \verb+ext_in+ devra se connecter via une connexion TCP au serveur qu'a
       ouvert l'autre extrémité du tunnel sur le meme port. La fonction devra
       ensuite transmettre le traffic lu sur \verb+tun0+ sur la socket. \\
 
@@ -172,8 +171,8 @@
       \verb+write+ si l'option \verb+flags+ de ces appels est égal à 0, c'est à
       dire que nous n'avons pas besoin d'options particulière. Nous n'avons
       besoin d'aucune option, nous pouvons donc utiliser la fonction
-      \verb+transfert+ de la bibliothèque \verb+iftun+ transferer un flux vers
-      la socket ou inversement. \\
+      \verb+transfert+ de la bibliothèque \verb+iftun+ pour transferer un flux
+      vers la socket ou inversement. \\
 
       On déploie un programme exécutant \verb+ext_in+ sur VM1 et un autre
       exécutant \verb+ext_out+ sur VM3, on ping ensuite \verb+fc00:1234:ffff:10+
@@ -197,7 +196,7 @@
       Cette modification permettra au datagramme IPv6 conduit par le tunnel
       d'etre transmis par \verb+tun0+ vers sa destination. En effet, lorsque
       l'on écrit dans le fichier correspondant à \verb+tun0+, l'interface
-      interprète les paquets comme si ils étaient envoyé par une machine (par
+      interprète les paquets comme si ils étaient envoyés par une machine (par
       exemple par un ping), \verb+tun0+ se charge donc de les retransmettre. \\
 
       On lance \verb+ext_in+ sur \verb+VM1+, \verb+ext_out+ sur \verb+VM3+ puis
@@ -233,7 +232,7 @@
 
       On peux vérifier que les communications en réaliant un ping depuis deux
       terminaux différents sur VM3, on voit que les réponses arrivent
-      alternativement sur les deux terminaux, la communications sont donc bien
+      alternativement sur les deux terminaux, les communications sont donc bien
       asynchrones.
 
     \newpage
@@ -258,8 +257,8 @@
 
     \newpage
     \subsection{Mise en place du tunnel entre VM1 et VM3 : Système}
-      Nous enfin un exécutable permettant de lancer le tunne bidirectionnel sur
-      une machine, nommé : \verb+tunnel64d+. \\
+      Nous avons enfin un exécutable permettant de lancer le tunnel
+      bidirectionnel sur une machine, nommé \verb+tunnel64d+. \\
 
       Cet exécutable prendra sa configuration dans un fichier \verb+tunnel.conf+
       qui devra etre situé dans le répertoire \verb+/vagrant+ de la machine. Ce
@@ -278,7 +277,7 @@
 
       \begin{itemize}
         \item \verb+dev+ doit etre égal à l'interface TUN que le tunnel va
-              devoir utiliser (après l'avoir créé), exemple : \verb+tun0+.
+              devoir utiliser (après l'avoir créée), exemple : \verb+tun0+.
         \item \verb+portin+ doit etre égal au port par lequel on souhaite écrire
               les données transitant par l'interface.
         \item \verb+portout+ doit etre égal au port sur lequel on souhaite
@@ -298,7 +297,7 @@
     \subsection{Configuration}
       Le tunnel est en place sur les machines \verb+VM1+ et \verb+VM3+, en
       respectant l'architecture réseau vue précédemment. Les paramètres réseaux
-      significatives sur les machines lorsque le tunnel est actif sur le réseau
+      significatifs sur les machines lorsque le tunnel est actif sur le réseau
       sont :
 
       \begin{itemize}
@@ -441,13 +440,13 @@
       en compte la taille des paquets y transitant. \\
 
       Tout d'abord, rappelons que l'appel système \verb+read+ renvoie le nombre
-      d'octet qu'il a lu à partir du descrpteur de fichier qu'on lui à donné, on
+      d'octet qu'il a lu à partir du descrpteur de fichier qu'on lui a donné, on
       peut se servir de ce retour pour déterminer la taille d'un paquet dans
       \verb+ext_in+. Le nombre d'ocets à lire passé en paramètre de \verb+read+
       dans le transfert de \verb+ext_in+ sera égal au \verb+MTU+ de \verb+tun0+.
 
-      Sachant que la taille d'un paquet peut être supérieur à 256, on va écrire
-      la taille du paquet sur deux octets. On va ensuite envoyer ces deux ocets
+      Sachant que la taille d'un paquet peut être supérieure à 256, on va écrire
+      la taille du paquet sur deux octets. On va ensuite envoyer ces deux octets
       avant d'écrire le paquet dans le tunnel. À la réception de cette entête,
       l'autre extrémité du tunnel (la fonction \verb+ext_out+) va pouvoir lire
       exactement le nombre d'octets que contient le paquet, puis l'écrire dans
@@ -456,8 +455,8 @@
       En terme d'implémentation, on passera un paramètre à la fonction existante
       \verb+transfert+ de la bibliothèque \verb+iftun+, selon si on est dans la
       fonction \verb+ext_out+, ou bien dans la fonction \verb+ext_in+. On peut
-      voir l'impléntation finale de la fonction \verb+transfert+ est disponible
-      dans le fichier \verb+src/iftun.c+.
+      voir l'impléntation finale de la fonction \verb+transfert+ dans le fichier
+      \verb+src/iftun.c+.
 
     \subsection{Configuration ansible}
       On pourrait se demander si une configuration via \verb+ansible+ peut
@@ -500,12 +499,12 @@
       \end{minted}
 
       L'inconvénient de cette option est qu'elle est limitée dans le temps, bien
-      que nous puissions mettre l'équivalent d'un mois en secondes, nous avons
+      que nous puissions mettre l'équivalent d'un mois en secondes. Nous avons
       cherché une autre façon de procéder. \\
 
       La commande \verb+UNIX+ \verb+nohup+ permet de lancer un processus et le
       rendre persistent même si l'on ferme le terminal où la commande est
-      appellée et même si l'utilisateur qui à exécuté le commande se déconnecte.
+      appellée et même si l'utilisateur qui a exécuté le commande se déconnecte.
 
       On peut utiliser la commande comme suit dans la configuration
       \verb+ansible+ :
